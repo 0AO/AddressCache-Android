@@ -13,19 +13,18 @@ public class AddressCache
 	private Method get;
 	private Method put;
 	private Method putUnknownHost;
+        private boolean mode;
 	private Method clear;
 	
 	public InetAddress[] get(String hostname) throws InvocationTargetException, IllegalAccessException, IllegalArgumentException {
-	Class<?>[] ParameterTypes=get.getParameterTypes();
-	if(ParameterTypes.length==1)return (InetAddress[])get.invoke(obj,hostname);
+	if(mode)return (InetAddress[])get.invoke(obj,hostname);
 	else
 	return (InetAddress[])get.invoke(obj,hostname,0);
 	}
 
 	public void put(String hostname, InetAddress[] addresses) throws InvocationTargetException, IllegalAccessException, IllegalArgumentException
 	{
-	Class<?>[] ParameterTypes=put.getParameterTypes();
-	if(ParameterTypes.length==2)
+	if(mode)
 	put.invoke(obj,hostname,addresses);
 	else
 	put.invoke(obj,hostname,0,addresses);
@@ -33,8 +32,7 @@ public class AddressCache
 
 	public void putUnknownHost(String hostname, String detailMessage) throws InvocationTargetException, IllegalAccessException, IllegalArgumentException
 	{
-	Class<?>[] ParameterTypes=putUnknownHost.getParameterTypes();
-    if(ParameterTypes.length==2)
+        if(mode)
 	putUnknownHost.invoke(obj,hostname,detailMessage);
 	else
 	putUnknownHost.invoke(obj,hostname,0,detailMessage);
@@ -65,6 +63,9 @@ public class AddressCache
 	putUnknownHost=i;
 	else if(i.getName().equals("clear"))
 	clear=i;
-}}
+}
+	 Class<?>[] ParameterTypes=get.getParameterTypes();
+	 mode=ParameterTypes.length==1;
+  }
 
 }
